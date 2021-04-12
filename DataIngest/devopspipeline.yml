@@ -32,8 +32,8 @@ stages:
       inputs:
         azureSubscription: 'amlpipelinedeploy'
         scriptLocation: inlineScript
-        workingDirectory: $(Build.SourcesDirectory)
+        #workingDirectory: $(Build.SourcesDirectory)
         inlineScript: |
-          python -m IngestDataPipeline.py
+          python -m DataIngest.IngestDataPipeline.py
       displayName: 'Publish Azure Machine Learning Pipeline'
     

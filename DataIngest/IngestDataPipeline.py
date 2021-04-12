@@ -68,7 +68,7 @@ compute_config.environment.python.conda_dependencies = dependencies
 
 StepToWriteDateFile = PythonScriptStep(
     name='StepToWriteDateFile',
-    script_name="StepToWriteDateFile.py",
+    script_name="./DataIngest/StepToWriteDateFile.py",
     arguments=["--arg1", string_pipeline_param, "--arg2", datapath_input],
     inputs=[datapath_input],
     runconfig = compute_config ,
@@ -90,12 +90,12 @@ dataset = Dataset.File.from_files(path = [(mydatastore, f"rawdata/daystoprocess/
 
 env = Environment(name="parallelenv")
 
-env.from_conda_specification('parallelenv','parallelenv.yml')
+env.from_conda_specification('parallelenv','./DataIngest/parallelenv.yml')
 
 
 parallel_run_config = ParallelRunConfig(
    source_directory='.',
-   entry_script='parallelrunstep.py',
+   entry_script='./DataIngest/parallelrunstep.py',
    mini_batch_size="1",
    error_threshold=30,
    output_action="append_row",

@@ -72,7 +72,10 @@ def pullUsageAndSaveV2(url, token,startDate,endDate, counter,usageDataFrame):
     usageDF = pd.DataFrame.from_dict(usageData) 
     if 'properties' in usageDF:      
         propsExpanded = usageDF['properties'].apply(pd.Series)
-        usageDFNew = pd.concat([usageDF.drop(['properties'], axis=1),propsExpanded[['meterId','resourceGroup','offerId','chargeType','frequency','quantity','effectivePrice','cost','unitPrice','billingCurrency','date','resourceId']]], axis=1)
+        if 'date' in propsExpanded:
+            usageDFNew = pd.concat([usageDF.drop(['properties'], axis=1),propsExpanded[['meterId','resourceGroup','offerId','chargeType','frequency','quantity','effectivePrice','cost','unitPrice','billingCurrency','date','resourceId']]], axis=1)
+        else :
+            usageDFNew = pd.DataFrame()
     else :
         usageDFNew = pd.DataFrame()
     print(usageDFNew.shape)

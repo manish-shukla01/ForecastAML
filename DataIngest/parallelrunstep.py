@@ -71,12 +71,7 @@ def pullUsageAndSaveV2(url, token,startDate,endDate, counter,usageDataFrame):
     usageData = dataObj['value']
     usageDF = pd.DataFrame.from_dict(usageData)
     propsExpanded = usageDF['properties'].apply(pd.Series)
-    #print('printing shape of expanded')
-    #print(propsExpanded.shape)
-    #print ('printing columns')
-    #print(propsExpanded.columns)
-    #usageDFNew = pd.concat([usageDF.drop(['properties'], axis=1), usageDF['properties'].apply(pd.Series)], axis=1)
-    
+     
     usageDFNew = pd.concat([usageDF.drop(['properties'], axis=1),propsExpanded[['meterId','resourceGroup','offerId','chargeType','frequency','quantity','effectivePrice','cost','unitPrice','billingCurrency','date','resourceId']]], axis=1)
     print(usageDFNew.shape)
     files = []
@@ -88,15 +83,11 @@ def pullUsageAndSaveV2(url, token,startDate,endDate, counter,usageDataFrame):
         print(f'adding {usageDFNew.shape[0]} rows to exisitng dataframe of size {usageDataFrame.shape[0]}')
         usageDataFrame = usageDataFrame.append(usageDFNew)
         print (f'usageDataFrame is now {usageDataFrame.shape[0]}')
-    #print (usageDataFrame.shape)
-    #return usageDFNew
-    #usageDFNew.to_csv(f'{datapath}/{startDate}To{endDate}-{counter}.csv')
     if 'nextLink' in dataObj:     
         pullUsageAndSave(datapath,dataObj['nextLink'],token,startDate, endDate,counter+1,usageDataFrame)
     else:
         print (f'saving dataframe with shape: {usageDataFrame.shape}')
         for singleDay in usageDataFrame['date'].unique():
-            #print (singleDay)
             singleDayData = usageDataFrame[usageDataFrame['date'] == singleDay]
             print (f'saving rows for {singleDay} {singleDayData.shape[0]}')
             singleDayData.to_csv(f"{singleDay[0:4]}{singleDay[5:7]}{singleDay[8:10]}.csv")
@@ -126,16 +117,18 @@ def init():
     
 
 
-def run(input_data):
-    for index, row in input_data.iterrows():
-        print(row)
-        startDate = row['startDate']
-        endDate = row['endDate']
-        startDate = startDate.strftime("%Y-%m-%d")
-        endDate = endDate.strftime("%Y-%m-%d")
-        url = f"https://management.azure.com/subscriptions/c79c9d40-d5f3-40ee-bb7b-e43b3bb4efe6/providers/Microsoft.Consumption/usagedetails?api-version=2019-11-01&$filter=properties/usageStart+ge+'{startDate}T00:00:00'+and+properties/usageStart+le+'{endDate}T00:00:00'"
-        print(index)
-        print(url)
-        #startDate
-        pullUsageAndSaveV2(url, token,startDate  ,endDate ,0,pd.DataFrame())
+def run(mini_batch):
+
+    for file_path in mini_batch:
+        print (file_path)
+        input_data = pd.read_csv(file_path)
+        for index, row in input_data.iterrows():
+            print(row)
+            startDate = row['startDate']
+            endDate = row['endDate']
+            #startDate = startDate.strftime("%Y-%m-%d")
+            #endDate = endDate.strftime("%Y-%m-%d")
+            url = f"https://management.azure.com/subscriptions/c79c9d40-d5f3-40ee-bb7b-e43b3bb4efe6/providers/Microsoft.Consumption/usagedetails?api-version=2019-11-01&$filter=properties/usageStart+ge+'{startDate}T00:00:00'+and+properties/usageStart+le+'{endDate}T00:00:00'"
+            print(url)
+            pullUsageAndSaveV2(url, token,startDate  ,endDate ,0,pd.DataFrame())
     return input_data

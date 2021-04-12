@@ -77,8 +77,16 @@ StepToWriteDateFile = PythonScriptStep(
 print("StepToWriteDateFile created")
 
 mydatastore = Datastore.get(workspace, 'billingdatablobstorage')
+run = Run.get_context()
+runId =  run.id
+print(runId)
 
-dataset = Dataset.Tabular.from_delimited_files(path = [(mydatastore, 'rawdata/daystoprocess/data.csv')])
+if runId[0:10] == "OfflineRun" :
+    runId = "default"
+else :
+    runId = run.parent.id
+
+dataset = Dataset.File.from_files(path = [(mydatastore, f"rawdata/daystoprocess/{runId}/*.csv")])
 
 env = Environment(name="parallelenv")
 
@@ -86,11 +94,10 @@ env.from_conda_specification('parallelenv','parallelenv.yml')
 
 
 parallel_run_config = ParallelRunConfig(
-   
    source_directory='.',
    entry_script='parallelrunstep.py',
-   mini_batch_size="128",
-   error_threshold=10,
+   mini_batch_size="1",
+   error_threshold=30,
    output_action="append_row",
    environment=env,
    compute_target='cpu-cluster',

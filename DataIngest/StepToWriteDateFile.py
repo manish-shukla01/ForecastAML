@@ -4,22 +4,38 @@ import pandas as pd
 import time
 import datetime
 from datetime import timedelta
+from azureml.core import Run
+
 def createnDayBlocks(datapath,startDate,n):
-    data = []
+    
     endDate=startDate
+    counter = 1
+    
+    
+    run = Run.get_context()
+    runId =  run.id
+    print(runId)
+
+    if runId[0:10] == "OfflineRun" :
+        runId = "default"
+    else :
+        runId = run.parent.id
+
 
     while endDate <  datetime.datetime.now().date():
+        data = []
         endDate = startDate + timedelta(n)
         if(endDate >= datetime.datetime.now().date()):
             print (endDate)
             endDate = datetime.datetime.now().date()
         data.append({'startDate':startDate,'endDate':endDate})  
         startDate = endDate + timedelta(1)
+        dfToWrite = pd.DataFrame(data)
+        if(not os.path.exists(f"{datapath}/daystoprocess/{runId}")):
+            os.mkdir(f"{datapath}/daystoprocess/{runId}")
+        dfToWrite.to_csv(f"{datapath}/daystoprocess/{runId}/data-{counter}.csv")
+        counter = counter+1
     
-    dfToWrite = pd.DataFrame(data)  
-    dfToWrite.to_csv(f"{datapath}/daystoprocess/data.csv")
-
-
 parser = argparse.ArgumentParser("getData")
 parser.add_argument("--arg1", type=str, help="input start date")
 parser.add_argument("--arg2", type=str, help="datapath to write or read")

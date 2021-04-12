@@ -34,6 +34,6 @@ stages:
         scriptLocation: inlineScript
         workingDirectory: $(Build.SourcesDirectory)
         inlineScript: |
-          python -m IngestDataPipeline.yml
+          python -m IngestDataPipeline.py
       displayName: 'Publish Azure Machine Learning Pipeline'
     

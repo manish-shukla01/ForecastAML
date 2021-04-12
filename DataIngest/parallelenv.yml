@@ -1,0 +1,9 @@
+name: stats
+dependencies:
+  - numpy
+  - pandas
+  - pip 
+  - azureml-dataset-runtime[fuse,pandas]
+  - pip:
+      - azureml-sdk
+      - adal==0.4.7

@@ -69,20 +69,21 @@ def pullUsageAndSaveV2(url, token,startDate,endDate, counter,usageDataFrame):
         return
         
     usageData = dataObj['value']
-    usageDF = pd.DataFrame.from_dict(usageData)
-    propsExpanded = usageDF['properties'].apply(pd.Series)
-     
-    usageDFNew = pd.concat([usageDF.drop(['properties'], axis=1),propsExpanded[['meterId','resourceGroup','offerId','chargeType','frequency','quantity','effectivePrice','cost','unitPrice','billingCurrency','date','resourceId']]], axis=1)
-    print(usageDFNew.shape)
-    files = []
-    groupedFiles = []
-    if (usageDataFrame.shape[0] == 0):
-        print('assigning data first time')
-        usageDataFrame = usageDFNew
-    else:
-        print(f'adding {usageDFNew.shape[0]} rows to exisitng dataframe of size {usageDataFrame.shape[0]}')
-        usageDataFrame = usageDataFrame.append(usageDFNew)
-        print (f'usageDataFrame is now {usageDataFrame.shape[0]}')
+    
+    if 'properties' in usageData:
+        usageDF = pd.DataFrame.from_dict(usageData)        
+        propsExpanded = usageDF['properties'].apply(pd.Series)
+        usageDFNew = pd.concat([usageDF.drop(['properties'], axis=1),propsExpanded[['meterId','resourceGroup','offerId','chargeType','frequency','quantity','effectivePrice','cost','unitPrice','billingCurrency','date','resourceId']]], axis=1)
+        print(usageDFNew.shape)
+        files = []
+        groupedFiles = []
+        if (usageDataFrame.shape[0] == 0):
+            print('assigning data first time')
+            usageDataFrame = usageDFNew
+        else:
+            print(f'adding {usageDFNew.shape[0]} rows to exisitng dataframe of size {usageDataFrame.shape[0]}')
+            usageDataFrame = usageDataFrame.append(usageDFNew)
+            print (f'usageDataFrame is now {usageDataFrame.shape[0]}')
     if 'nextLink' in dataObj:     
         pullUsageAndSave(datapath,dataObj['nextLink'],token,startDate, endDate,counter+1,usageDataFrame)
     else:

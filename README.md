@@ -1,7 +1,7 @@
-# Simple Continuous Integration process and modeling
+## Simple Continuous Integration process and modeling using Devops pipeline and AML pipeline
 This repo will contain some code that shows how AML can be used to set up data ingestion in parallel and then do forecast based on rolling window of time.
 
-## Data Ingestion
+### Data Ingestion
 
 1. When data is pulled from an external sourcee. (e.g. Billing API in this case), you could parallelize the data pulling process using ParallelRunStep available in AML sdk. 
 2. You will have to shard the data pulling parameters in such a way that no two api pull results in same data. 
@@ -21,3 +21,8 @@ Datastore registration:
 Mini batch files:
 
 ![](./screenshots/filesForMinibatches.png)
+
+### Scheduling the Pipeline:
+
+AML pipelines have inbuilt scheduling but it is easier to schedule pipelines in azure data factory especially if there are processes outside of ML which needs to be considered for running the pipeline.
+

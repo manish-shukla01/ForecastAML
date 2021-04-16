@@ -10,4 +10,14 @@ This repo will contain some code that shows how AML can be used to set up data i
 
 ### Overview of AML pipeline:
 
+Pipeline looks like the below diagram:
+
 ![](./screenshots/amlpipeline.png)
+
+Datastore registration:
+
+![](./screenshots/dataStoreRegistration.png)
+
+Mini batch files:
+
+![](./screenshots/filesForMinibatches.png)

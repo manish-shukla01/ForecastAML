@@ -10,3 +10,4 @@ This repo will contain some code that shows how AML can be used to set up data i
 
 ### Overview of AML pipeline:
 
+![](./screenshots/amlpipeline.png)

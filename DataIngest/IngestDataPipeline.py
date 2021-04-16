@@ -103,7 +103,7 @@ parallel_run_config = ParallelRunConfig(
    compute_target='cpu-cluster',
    append_row_file_name="my_outputs.txt",
    run_invocation_timeout=1200,
-   node_count=2)
+   node_count=1)
 
 parallelrun_step = ParallelRunStep(
    name="parallelapicalls",

@@ -94,24 +94,27 @@ def pullUsageAndSaveV2(url, token,startDate,endDate, counter,usageDataFrame):
         pullUsageAndSave(datapath,dataObj['nextLink'],token,startDate, endDate,counter+1,usageDataFrame)
     else:
         print (f'saving dataframe with shape: {usageDataFrame.shape}')
-        for singleDay in usageDataFrame['date'].unique():
-            singleDayData = usageDataFrame[usageDataFrame['date'] == singleDay]
-            print (f'saving rows for {singleDay} {singleDayData.shape[0]}')
-            singleDayData.to_csv(f"{singleDay[0:4]}{singleDay[5:7]}{singleDay[8:10]}.csv")
-            files.append(f"{singleDay[0:4]}{singleDay[5:7]}{singleDay[8:10]}.csv")
-            mydatastore.upload_files(
-                    files, # List[str] of absolute paths of files to upload
-                    target_path='rawdata',
-                    overwrite=True,
-                    )
-            groupedData = singleDayData.groupby(['meterId','resourceGroup','date']).agg({'cost':sum,'quantity':sum})
-            groupedData.to_csv(f"{singleDay[0:4]}{singleDay[5:7]}{singleDay[8:10]}grouped.csv")
-            groupedFiles.append(f"{singleDay[0:4]}{singleDay[5:7]}{singleDay[8:10]}grouped.csv")
-            mydatastore.upload_files(
-                    groupedFiles, # List[str] of absolute paths of files to upload
-                    target_path='rolledup',
-                    overwrite=True,
-                    )
+        if 'date' in usageDataFrame  :
+            for singleDay in usageDataFrame['date'].unique():
+                singleDayData = usageDataFrame[usageDataFrame['date'] == singleDay]
+                print (f'saving rows for {singleDay} {singleDayData.shape[0]}')
+                singleDayData.to_csv(f"{singleDay[0:4]}{singleDay[5:7]}{singleDay[8:10]}.csv")
+                files.append(f"{singleDay[0:4]}{singleDay[5:7]}{singleDay[8:10]}.csv")
+                mydatastore.upload_files(
+                        files, # List[str] of absolute paths of files to upload
+                        target_path='rawdata',
+                        overwrite=True,
+                        )
+                groupedData = singleDayData.groupby(['meterId','resourceGroup','date']).agg({'cost':sum,'quantity':sum})
+                groupedData.to_csv(f"{singleDay[0:4]}{singleDay[5:7]}{singleDay[8:10]}grouped.csv")
+                groupedFiles.append(f"{singleDay[0:4]}{singleDay[5:7]}{singleDay[8:10]}grouped.csv")
+                mydatastore.upload_files(
+                        groupedFiles, # List[str] of absolute paths of files to upload
+                        target_path='rolledup',
+                        overwrite=True,
+                        )
+        else :
+            print (f'saving dataframe with shape: {usageDataFrame.shape} but date key not found so leaving that and moving ahead')
     
 
 def init():

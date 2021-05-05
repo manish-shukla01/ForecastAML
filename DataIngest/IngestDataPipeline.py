@@ -92,7 +92,6 @@ env = Environment(name="parallelenv")
 
 env.from_conda_specification('parallelenv','./DataIngest/parallelenv.yml')
 
-
 parallel_run_config = ParallelRunConfig(
    source_directory='.',
    entry_script='./DataIngest/parallelrunstep.py',
